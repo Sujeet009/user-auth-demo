@@ -9,7 +9,7 @@ import {
   import { Length, IsNotEmpty } from "class-validator";
   import * as bcrypt from "bcryptjs";
   
-  @Entity()
+  @Entity("users")
   export class User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -32,11 +32,11 @@ import {
 
     @Column()
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
   
-    @Column()
+      @Column()
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
   
     hashPassword() {
       this.password = bcrypt.hashSync(this.password, 8);

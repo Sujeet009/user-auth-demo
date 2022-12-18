@@ -8,6 +8,7 @@ const myDataSource = new DataSource({
     password: "root",
     database: "postgres",
     entities: ["src/entity/*.ts"],
+    migrations: ['src/migration/*.ts'],
     logging: true,
     synchronize: true,
 })
