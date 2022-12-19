@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import myDataSource from "../../db";
+import myDataSource from "../config/db";
 import { User } from "../entity/User";
 
 const isAuthenticatedUser = async (req: any, res: Response, next: NextFunction) => {

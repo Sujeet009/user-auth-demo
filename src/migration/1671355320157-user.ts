@@ -8,7 +8,7 @@ export class user1671355320157 implements MigrationInterface {
             name VARCHAR  NOT NULL,
             password VARCHAR  NOT NULL,
             email VARCHAR UNIQUE NOT NULL UNIQUE,
-            role VARCHAR NOT NULL,
+            role AS ENUM ('user', 'admin') VARCHAR NOT NULL DEFAULT 'user,
             created_at TIMESTAMP NOT NULL  DEFAULT now(),
             update_at TIMESTAMP NOT NULL  DEFAULT now()
         );`);
