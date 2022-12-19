@@ -1,8 +1,8 @@
 import "reflect-metadata";
+import 'dotenv/config'
 import * as express from "express";
-import myDataSource from './db'
+import myDataSource from './src/config/db'
 import routes from "./src/router";
-import user from "./src/router/user"
 
 myDataSource.initialize()
     .then(() => {
@@ -18,6 +18,6 @@ app.use(express.json())
 app.use("/api/v1", routes);
 
 
-app.listen('6000', () => {
-    console.log("server is running");
+app.listen(process.env.PORT, () => {
+    console.log(`server is running on ${process.env.PORT}`);
 })
