@@ -3,7 +3,8 @@ import myDataSource from "../config/db";
 import { createJwtToken } from "../utils/jwt";
 import { User } from "../entity/User.entity";
 import * as bcrypt from "bcryptjs";
-import UserService from "./user.service";
+import UserService from "../service/user.service";
+const jwt_secret="sjkafnkjanfkjasfkasnfjn";
 
 class UserController {
   userTable = myDataSource.getRepository(User);
@@ -32,7 +33,14 @@ class UserController {
       const user = await this.userService.createUser(body);
       const token = createJwtToken(user.id);
 
-      return res.send({ token });
+      let response={
+        message:"Record inserted Successfully....",
+        data:user,
+        token
+      }
+      return res.send(response);
+      // return res.send({ token });
+      
     } catch (error) {
       return res.status(400).send(error.message);
     }

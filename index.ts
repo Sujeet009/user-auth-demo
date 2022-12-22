@@ -4,6 +4,7 @@ import * as express from "express";
 import myDataSource from './src/config/db'
 import routes from "./src/router";
 
+
 myDataSource.initialize()
     .then(() => {
         console.log("Data Source has been initialized!")
@@ -19,5 +20,8 @@ app.use("/api/v1", routes);
 
 
 app.listen(process.env.PORT, () => {
-    console.log(`server is running on ${process.env.PORT}`);
+    console.log(`server running as ${process.env.PORT}`);
+    
+    // console.log(`server is running on ${process.env.PORT}`);
 })
+
