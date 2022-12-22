@@ -1,33 +1,33 @@
 import { NextFunction, Request, Response } from "express";
-import myDataSource from "../../config/db";
-import { createJwtToken } from "../../utils/jwt";
-import { User } from "../../entity/User";
+import myDataSource from "../config/db";
+import { createJwtToken } from "../utils/jwt";
+import { User } from "../entity/User.entity";
 import * as bcrypt from "bcryptjs";
-import UserService from "../service/user.service";
+import UserService from "./user.service";
 
 class UserController {
-  static userTable = myDataSource.getRepository(User);
-  static userService = UserService;
+  userTable = myDataSource.getRepository(User);
+  userService: UserService = new  UserService();
 
-  static getUser = async (req: any, res: Response, next: NextFunction) => {
+  async getUser (req: any, res: Response, next: NextFunction) {
     try {
       const user = await this.userService.getUserById(req.user.id);
+      if(!user){
+        throw new Error("user not found");
+      }
+
       return res.send(user);
+
     } catch (error) {
       return res.status(400).send({ error: error.message });
     }
-  };
+  }
 
-  static createUser = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       const body = req.body;
 
       body["password"] = bcrypt.hashSync(body.password, 8);
-      console.log("body1324534534534533", body);
 
       const user = await this.userService.createUser(body);
       const token = createJwtToken(user.id);
@@ -36,27 +36,27 @@ class UserController {
     } catch (error) {
       return res.status(400).send(error.message);
     }
-  };
+  }
 
-  static getAllUser = async (req: any, res: Response, next: NextFunction) => {
+  async getAllUser(req: any, res: Response, next: NextFunction) {
     try {
-      const user = await this.userService.getAllUser(req, res, next);
+      const user = await this.userService.getAllUser();
       return res.send(user);
     } catch (error) {
       return res.status(400).send(error.message);
     }
-  };
+  }
 
-  static deleteUser = async (req: any, res: Response, next: NextFunction) => {
+  async deleteUser(req: any, res: Response, next: NextFunction){
     try {
       const user = await this.userService.getUserById(req.user.id);
-      const deleteUser = await this.userService.deleteUser(user.id);
+      await this.userService.deleteUser(user.id);
 
-      return res.send(deleteUser);
+      return res.status(200).json({message:"delete user succesFully"});
     } catch (error) {
       return res.status(400).send(error.message);
     }
-  };
+  }
 }
 
 export default UserController;
