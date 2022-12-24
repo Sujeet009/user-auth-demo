@@ -2,12 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import myDataSource from "../config/db";
 import { User } from "../entity/User.entity";
+import ErrorHandler from "../utils/Errorhandle";
 
 const isAuthenticatedUser = async (req: any, res: Response, next: NextFunction) => {
     try {
         const { token }: any = req.headers;
+        
         if (!token) {
-            return res.status(400).send({message:"token is required"});
+          return next(new ErrorHandler("Please Login to access this resource", 401));
         }
         const decodedData: any = verify(token, "sjkafnkjanfkjasfkasnfjn");
         const userTable = myDataSource.getRepository(User)

@@ -3,23 +3,25 @@ import myDataSource from "../config/db";
 import { createJwtToken } from "../utils/jwt";
 import { User } from "../entity/User.entity";
 import * as bcrypt from "bcryptjs";
-import UserService from "./user.service";
+import {UserService} from "./user.service";
+import ErrorHandler from "../utils/Errorhandle";
+
+const userService = new UserService()
 
 class UserController {
   userTable = myDataSource.getRepository(User);
-  userService: UserService = new  UserService();
 
   async getUser (req: any, res: Response, next: NextFunction) {
     try {
-      const user = await this.userService.getUserById(req.user.id);
+      const user = await userService.getUserById(req.user.id);
       if(!user){
-        throw new Error("user not found");
+        return next(new ErrorHandler("user not found",400));
       }
 
       return res.send(user);
 
     } catch (error) {
-      return res.status(400).send({ error: error.message });
+      next(error.message)
     }
   }
 
@@ -29,32 +31,39 @@ class UserController {
 
       body["password"] = bcrypt.hashSync(body.password, 8);
 
-      const user = await this.userService.createUser(body);
+      const user = await userService.createUser(body);
+      
       const token = createJwtToken(user.id);
 
       return res.send({ token });
     } catch (error) {
-      return res.status(400).send(error.message);
+      next(error)
     }
   }
 
   async getAllUser(req: any, res: Response, next: NextFunction) {
     try {
-      const user = await this.userService.getAllUser();
+      const user = await userService.getAllUser();
       return res.send(user);
+   
     } catch (error) {
-      return res.status(400).send(error.message);
+      next(error)
+      
     }
+
   }
 
   async deleteUser(req: any, res: Response, next: NextFunction){
     try {
-      const user = await this.userService.getUserById(req.user.id);
-      await this.userService.deleteUser(user.id);
+      const user = await userService.getUserById(req.user.id);
+      if(!user){
+        return next(new ErrorHandler("user not found",400));
+      }
+      await userService.deleteUser(user.id);
 
       return res.status(200).json({message:"delete user succesFully"});
     } catch (error) {
-      return res.status(400).send(error.message);
+      next(error)
     }
   }
 }
